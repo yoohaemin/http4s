@@ -211,8 +211,8 @@ sealed trait Message[F[_]] { self =>
     * @tparam T type of the result
     * @return the effect which will generate the T
     */
-  def as[T](implicit F: Functor[F], decoder: EntityDecoder[F, T]): F[T] =
-    attemptAs.fold(throw _, identity)
+  def as[T](implicit F: MonadError[F, Throwable], decoder: EntityDecoder[F, T]): F[T] =
+    attemptAs.leftWiden[Throwable].rethrowT
 
 }
 
